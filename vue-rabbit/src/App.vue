@@ -3,9 +3,7 @@ import { RouterLink, RouterView } from "vue-router";
 </script>
 
 <template>
-  <el-button type="primary" disabled>Primary</el-button>
   <RouterView />
-  <div class="test">test scss</div>
 </template>
 
 <style scoped lang="scss">

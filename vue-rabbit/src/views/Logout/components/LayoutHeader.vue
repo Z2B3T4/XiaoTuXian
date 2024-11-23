@@ -1,18 +1,8 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { getCategoryAPI } from "@/apis/logout.js";
-// 接受头部导航区列表
-const categoryList = ref([]);
-// 注意这里异步发出请求
-const getCategory = async () => {
-  const res = await getCategoryAPI();
-  console.log(res);
-  categoryList.value = res.result;
-};
-// 当挂在的时候获取数据
-onMounted(() => {
-  getCategory();
-});
+import { useCategoryStore } from "@/stores/category.ts";
+const categoryStore = useCategoryStore();
 </script>
 
 <template>
@@ -22,7 +12,11 @@ onMounted(() => {
         <RouterLink to="/">小兔鲜</RouterLink>
       </h1>
       <ul class="app-header-nav">
-        <li class="home" v-for="item in categoryList" :key="item.id">
+        <li
+          class="home"
+          v-for="item in categoryStore.categoryList"
+          :key="item.id"
+        >
           <RouterLink to="/">{{ item.name }}</RouterLink>
         </li>
       </ul>
