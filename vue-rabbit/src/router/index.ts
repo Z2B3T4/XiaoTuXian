@@ -7,6 +7,7 @@ import Logout from "@/views/Logout/index.vue";
 import Home from "@/views/Home/index.vue";
 import Category from "@/views/Categoty/index.vue";
 import SubCategory from "@/views/SubCategory/index.vue";
+import Detail from "@/views/Detail/index.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,6 +31,11 @@ const router = createRouter({
           name: "subcategory",
           component: SubCategory,
         },
+        {
+          path: "detail/:id",
+          name: "detail",
+          component: Detail,
+        },
       ],
     },
     {
@@ -38,6 +44,10 @@ const router = createRouter({
       component: Login,
     },
   ],
+  // 这个是对于路由行为的定制，一旦切换路由，就滚动到顶部
+  scrollBehavior() {
+    return { top: 0 };
+  },
 });
 
 export default router;

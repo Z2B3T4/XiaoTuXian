@@ -1,7 +1,9 @@
 <script setup>
-import { getCategoryFilterAPI } from "@/apis/category";
-import { ref } from "vue";
+import { getCategoryFilterAPI, getSubCategoryAPI } from "@/apis/category";
+import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import Goodsitem from "@/views/Home/components/GoodsItem.vue";
+
 const router = useRoute();
 
 const filterData = ref({});
@@ -10,6 +12,38 @@ const getFilterData = async () => {
   filterData.value = res.result;
 };
 getFilterData();
+
+// =========================
+const goodsList = ref([]);
+const reqDate = ref({
+  categoryId: router.params.id,
+  page: 1,
+  pageSize: 20,
+  sortField: "publishTime",
+});
+const getGoodList = async () => {
+  const res = await getSubCategoryAPI(reqDate.value);
+  goodsList.value = res.result.items;
+};
+
+onMounted(() => getGoodList());
+
+const tabChange = () => {
+  // 这里不需要我们手动去设置排序字段，因为在element-plus中一定为我们动态改变了
+  console.log("tab栏切换了", reqDate.value.sortField);
+  reqDate.value.page = 1;
+  getGoodList();
+};
+// 这个是实现无线加载数据
+const disabled = ref(false);
+const load = async () => {
+  reqDate.value.page = reqDate.value.page + 1;
+  const res = await getSubCategoryAPI(reqDate.value);
+  goodsList.value = [...goodsList.value, ...res.result.items];
+  if (res.result.items.length === 0) {
+    disabled.value = true;
+  }
+};
 </script>
 
 <template>
@@ -25,13 +59,24 @@ getFilterData();
       </el-breadcrumb>
     </div>
     <div class="sub-container">
-      <el-tabs>
+      <!-- 这里就是你一旦写了 v-model="reqDate.sortField" 这个之后
+       你一旦点击这个下面的tab栏，就会修改顺序的字段-->
+      <el-tabs v-model="reqDate.sortField" @tab-change="tabChange">
         <el-tab-pane label="最新商品" name="publishTime"></el-tab-pane>
         <el-tab-pane label="最高人气" name="orderNum"></el-tab-pane>
         <el-tab-pane label="评论最多" name="evaluateNum"></el-tab-pane>
       </el-tabs>
-      <div class="body">
+      <div
+        class="body"
+        v-infinite-scroll="load"
+        :infinite-scroll-disabled="disabled"
+      >
         <!-- 商品列表-->
+        <Goodsitem
+          v-for="good in goodsList"
+          :key="good.id"
+          :good="good"
+        ></Goodsitem>
       </div>
     </div>
   </div>
