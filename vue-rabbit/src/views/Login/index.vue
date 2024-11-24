@@ -1,5 +1,10 @@
 <script setup>
 import { ref } from "vue";
+import { ElMessage } from "element-plus";
+import "element-plus/theme-chalk/el-message.css";
+import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/user";
+const userStore = useUserStore();
 // 定义表单对象
 const userInfo = ref({
   account: "",
@@ -19,6 +24,26 @@ const rules = {
       },
     },
   ],
+};
+// 下面是进行登录校验
+const formRef = ref(null);
+// 负责路由跳转，useRoute这个不带r的是拿参数
+const router = useRouter();
+const doLogin = () => {
+  const { account, password } = userInfo.value;
+  // validate 是实例化方法，固定写法
+  formRef.value.validate(async (valid) => {
+    // 只有所有的都通过校验，valid才是true
+    console.log(valid);
+    if (valid) {
+      // await userStore.getUserInfo({ account, password });
+      // console.log(res);
+      // 提示用户
+      ElMessage({ type: "success", message: "登录成功" });
+      // 跳转首页
+      router.replace({ path: "/" });
+    }
+  });
 };
 </script>
 
@@ -49,6 +74,7 @@ const rules = {
               label-position="right"
               label-width="60px"
               status-icon
+              ref="formRef"
             >
               <el-form-item prop="account" label="账户">
                 <el-input v-model="userInfo.account" />
@@ -61,7 +87,9 @@ const rules = {
                   我已同意隐私条款和服务条款
                 </el-checkbox>
               </el-form-item>
-              <el-button size="large" class="subBtn">点击登录</el-button>
+              <el-button size="large" class="subBtn" @click="doLogin"
+                >点击登录</el-button
+              >
             </el-form>
           </div>
         </div>
