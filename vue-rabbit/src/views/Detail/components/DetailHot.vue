@@ -21,7 +21,7 @@ const route = useRoute();
 const getHotList = async () => {
   const res = await getHotGoodsAPI({
     id: route.params.id,
-    type: props.hotType,
+    type: props.hotType, // 注意这里要根据传过来的类型向后端传递请求
   });
   goodList.value = res.result;
 };
