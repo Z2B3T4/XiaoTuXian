@@ -1,35 +1,10 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-import { getTopCategoryAPI } from "@/apis/category";
-import { getBannerAPI } from "@/apis/home";
 import GoodsItem from "@/views/Home/components/GoodsItem.vue";
-// 这个是当检测到路由发生变化的时候，执行这个回调函数
-import { onBeforeRouteUpdate } from "vue-router";
-// 这里写成大括号的形式，主要是因为后端传过来的就是对象的形式
-const categoryData = ref({});
-const router = useRoute();
-const getCategoryData = async (id = router.params.id) => {
-  // id = router.params.id 这个就是默认是当前路由id，
-  // 传过来了，就以传过来的为主
-  const res = await getTopCategoryAPI(id);
-  categoryData.value = res.result;
-};
-getCategoryData();
-
-onBeforeRouteUpdate((to) => {
-  // 这个to就是要转过去的路由
-  getCategoryData(to.params.id);
-});
-
-const bannerList = ref([]);
-const getBanner = async () => {
-  const res = await getBannerAPI({
-    distributionSite: "2",
-  });
-  bannerList.value = res.result;
-};
-onMounted(() => getBanner());
+import { useBanner } from "@/views/Categoty/composables/useBanner";
+import { useCategory } from "@/views/Categoty/composables/useCategory";
+// 这里把组件封装出去了，好维护
+const { bannerList } = useBanner();
+const { categoryData } = useCategory();
 </script>
 
 <template>
