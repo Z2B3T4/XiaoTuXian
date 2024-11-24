@@ -3,7 +3,6 @@ import { getDetail } from "@/apis/detail";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import DetailHot from "./components/DetailHot.vue";
-import ImageView from "@/components/ImageView/index.vue";
 
 const goods = ref({});
 const router = useRoute();
@@ -14,6 +13,10 @@ const getGoods = async () => {
 };
 
 onMounted(() => getGoods());
+
+const skuChange = (sku) => {
+  console.log(sku);
+};
 </script>
 
 <template>
@@ -38,7 +41,7 @@ onMounted(() => getGoods());
             <div class="media">
               <!-- 图片预览区 -->
               <!-- 注意这里把后端传过来的大图传过去，动态渲染 -->
-              <ImageView :image-list="goods.mainPictures" />
+              <XtxImageView :image-list="goods.mainPictures" />
               <!-- 统计数量 -->
               <ul class="goods-sales">
                 <li>
@@ -87,7 +90,8 @@ onMounted(() => getGoods());
                 </dl>
               </div>
               <!-- sku组件 -->
-
+              <!-- 作用就是当选择了正确的选项的时候计算出一些属性传递给结算页面 -->
+              <XtxSku :goods="goods" @change="skuChange" />
               <!-- 数据组件 -->
 
               <!-- 按钮组件 -->
