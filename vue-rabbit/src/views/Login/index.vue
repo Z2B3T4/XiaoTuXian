@@ -36,7 +36,7 @@ const doLogin = () => {
     // 只有所有的都通过校验，valid才是true
     console.log(valid);
     if (valid) {
-      // await userStore.getUserInfo({ account, password });
+      await userStore.getUserInfo({ account, password });
       // console.log(res);
       // 提示用户
       ElMessage({ type: "success", message: "登录成功" });
