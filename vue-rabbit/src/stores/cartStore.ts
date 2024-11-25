@@ -29,6 +29,17 @@ export const useCartStore = defineStore(
     );
     // 表示是否所有的都选中
     const isAll = computed(() => cartList.value.every((item) => item.selected));
+    const selectedCount = computed(() =>
+      cartList.value
+        .filter((item) => item.selected)
+        .reduce((a, c) => a + c.count, 0)
+    );
+    const selectedPrice = computed(() =>
+      cartList.value
+        .filter((item) => item.selected)
+        .reduce((a, c) => a + c.price * c.count, 0)
+    );
+
     // 表示将所有的选中框都改为选中的状态
     const allCheck = (selected: any) => {
       cartList.value.forEach((item) => (item.selected = selected));
@@ -44,6 +55,8 @@ export const useCartStore = defineStore(
       cartList,
       allCount,
       allPrice,
+      selectedCount,
+      selectedPrice,
       allCheck,
       isAll,
       singleCheck,
