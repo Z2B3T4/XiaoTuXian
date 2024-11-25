@@ -2,6 +2,10 @@
 import { useCartStore } from "@/stores/cartStore";
 const cartStore = useCartStore();
 const cartList = [];
+function singleCheck(i, selected) {
+  //   console.log(i, selected);
+  cartStore.singleCheck(i.skuId, selected);
+}
 </script>
 
 <template>
@@ -25,7 +29,12 @@ const cartList = [];
           <tbody>
             <tr v-for="i in cartStore.cartList" :key="i.id">
               <td>
-                <el-checkbox />
+                <!-- 这里change时间的回调有难度，因为我们要传回给pinia告诉它，哪个的被选择状态
+                 需要改，那么传递给这个执行函数的时候，就需要把对象传进去 -->
+                <el-checkbox
+                  :model-value="i.selected"
+                  @change="(selected) => singleCheck(i, selected)"
+                />
               </td>
               <td>
                 <div class="goods">

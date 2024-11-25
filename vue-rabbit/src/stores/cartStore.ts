@@ -27,11 +27,17 @@ export const useCartStore = defineStore(
     const allPrice = computed(() =>
       cartList.value.reduce((a, c) => a + c.price * c.count, 0)
     );
+    // 根据传过来的skuId，将对应的产品的是否选中的状态进行修改
+    const singleCheck = (skuId, selected) => {
+      const item = cartList.value.find((item) => item.skuId === skuId);
+      item.selected = selected;
+    };
 
     return {
       cartList,
       allCount,
       allPrice,
+      singleCheck,
       addCart,
       delCart,
     };
