@@ -1,6 +1,15 @@
 <script setup>
 import { useUserStore } from "@/stores/user";
+import { useRouter } from "vue-router";
 const userStore = useUserStore();
+const router = useRouter();
+const confirm = () => {
+  console.log("用户点击了退出按钮");
+  // 用户退出登录之后清空用户信息
+  userStore.clearUserInfo();
+  // 并且条撞到登录页
+  router.push("/login");
+};
 </script>
 
 <template>
@@ -16,6 +25,7 @@ const userStore = useUserStore();
           </li>
           <li>
             <el-popconfirm
+              @confirm="confirm"
               title="确认退出吗?"
               confirm-button-text="确认"
               cancel-button-text="取消"

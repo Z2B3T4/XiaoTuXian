@@ -14,10 +14,14 @@ export const useUserStore = defineStore(
       const res = await LoginAPI({ account, password });
       userInfo.value = res.result;
     };
+    const clearUserInfo = () => {
+      userInfo.value = {};
+    };
     // 返回信息
     return {
       userInfo,
       getUserInfo,
+      clearUserInfo,
     };
   },
   {

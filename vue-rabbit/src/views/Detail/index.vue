@@ -3,7 +3,16 @@ import { getDetail } from "@/apis/detail";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import DetailHot from "./components/DetailHot.vue";
+import { ElMessage } from "element-plus";
+// 这个是购物车的pinia的管理仓库
+import { useCartStore } from "@/stores/cartStore";
+const cartStore = useCartStore();
 
+// 当sku规格被操作的时候
+let skuObj = {};
+
+// =======================
+// 这个是当来到这个页面的时候进行商品的查询渲染
 const goods = ref({});
 const router = useRoute();
 const getGoods = async () => {
@@ -16,6 +25,40 @@ onMounted(() => getGoods());
 
 const skuChange = (sku) => {
   console.log(sku);
+  skuObj = sku;
+};
+
+// ===================
+// 这里是用户选择数量的动态绑定值
+const count = ref(1);
+const countChange = (count) => {
+  console.log(count);
+};
+
+//  这里写的是当用户点击添加购物车的时候，触发的回调函数
+/*
+  这里有点复杂，这里逻辑是，我们要把用户的购物车信息存放到pinia中进行管理
+  于是我们先创建了一个pinia的cart的仓库，里面封装了add方法，
+  然后这里根据sku组件的skuId，也就是只有当组合合法的时候才会有，只要合法，
+  那么我就调用store中的add方法，在add方法中决定是新加还是数量加一
+*/
+const addCart = () => {
+  if (skuObj.skuId) {
+    // 规则已经选择，触发action
+    cartStore.addCart({
+      id: goods.value.id,
+      name: goods.value.name,
+      picture: goods.value.mainPictures[0],
+      price: goods.value.price,
+      count: count.value,
+      skuId: skuObj.skuId,
+      attrsText: skuObj.attrsText,
+      selected: true,
+    });
+  } else {
+    // 当规格没有选择全的时候，提示用户
+    ElMessage.warning("请选择规格");
+  }
 };
 </script>
 
@@ -95,8 +138,11 @@ const skuChange = (sku) => {
               <!-- 数据组件 -->
 
               <!-- 按钮组件 -->
+              <el-input-number v-model="count" @change="countChange" />
               <div>
-                <el-button size="large" class="btn"> 加入购物车 </el-button>
+                <el-button size="large" class="btn" @click="addCart">
+                  加入购物车
+                </el-button>
               </div>
             </div>
           </div>
