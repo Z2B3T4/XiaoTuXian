@@ -1,11 +1,18 @@
 <script setup>
 import { useCartStore } from "@/stores/cartStore";
+import { tr } from "element-plus/es/locales.mjs";
 const cartStore = useCartStore();
 const cartList = [];
 function singleCheck(i, selected) {
   //   console.log(i, selected);
   cartStore.singleCheck(i.skuId, selected);
 }
+// 表示当选中全选框的时候，将所有的都选上
+// 这种使用element-plus的组件，就是这个参数只要你写了，不需要传入参数，
+// 他会帮助你传入的
+const allCheck = (selected) => {
+  cartStore.allCheck(selected);
+};
 </script>
 
 <template>
@@ -16,7 +23,10 @@ function singleCheck(i, selected) {
           <thead>
             <tr>
               <th width="120">
-                <el-checkbox />
+                <el-checkbox
+                  :model-value="cartStore.isAll"
+                  @change="allCheck"
+                />
               </th>
               <th width="400">商品信息</th>
               <th width="220">单价</th>
