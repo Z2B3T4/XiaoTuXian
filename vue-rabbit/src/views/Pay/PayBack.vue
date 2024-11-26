@@ -2,6 +2,7 @@
 import { getOrderAPI } from "@/apis/pay";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+
 const route = useRoute();
 const orderInfo = ref({});
 // 拿到订单的数据，但是这里因为支付宝沙箱有问题，所以就演示不了，只能是先写了
