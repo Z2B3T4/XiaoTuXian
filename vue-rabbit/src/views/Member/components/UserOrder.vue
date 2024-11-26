@@ -1,6 +1,8 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { getUserOrder } from "@/apis/order";
+import { pa } from "element-plus/es/locales.mjs";
+import { formContextKey } from "element-plus";
 // tab列表
 const tabTypes = [
   { name: "all", label: "全部订单" },
@@ -11,8 +13,10 @@ const tabTypes = [
   { name: "complete", label: "已完成" },
   { name: "cancel", label: "已取消" },
 ];
+// 这里的接口都花了
 // 订单列表
 const orderList = ref([]);
+const total = ref(0);
 // 设置请求参数
 const params = ref({
   orderState: 0,
@@ -23,6 +27,7 @@ const params = ref({
 const getOrderList = async () => {
   const res = await getUserOrder(params.value);
   orderList.value = res.result.items;
+  total.value = res.result.counts;
 };
 onMounted(() => getOrderList());
 
@@ -30,6 +35,25 @@ const tabChange = (type) => {
   console.log(type);
   params.value.orderState = type;
   getOrderList();
+};
+
+const pageChange = (page) => {
+  params.value.page = page;
+  getOrderList();
+};
+
+// 将传过来的已完成的编号进行中文适配
+// 创建格式化函数
+const fomartPayState = (payState) => {
+  const stateMap = {
+    1: "待付款",
+    2: "待发货",
+    3: "待收货",
+    4: "待评价",
+    5: "已完成",
+    6: "已取消",
+  };
+  return stateMap[payState];
 };
 </script>
 
@@ -80,7 +104,7 @@ const tabChange = (type) => {
                 </ul>
               </div>
               <div class="column state">
-                <p>{{ order.orderState }}</p>
+                <p>{{ formContextKey(order.orderState) }}</p>
                 <p v-if="order.orderState === 3">
                   <a href="javascript:;" class="green">查看物流</a>
                 </p>
@@ -126,7 +150,13 @@ const tabChange = (type) => {
           </div>
           <!-- 分页 -->
           <div class="pagination-container">
-            <el-pagination background layout="prev, pager, next" />
+            <el-pagination
+              :total="total"
+              :page-size="params.pageSize"
+              background
+              layout="prev, pager, next"
+              @current-change="pageChange"
+            />
           </div>
         </div>
       </div>
